@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "Tree.hpp"
+#include <stdexcept>
 
 using namespace std;
 
@@ -9,7 +10,7 @@ ariel::Tree::Tree(){
     rootValue = NULL;
 }
 //Create a new leaf to the tree
-ariel::Tree::node* ariel::Tree::CreateLeaf(int data){
+ariel::Tree::node* ariel::Tree::createLeaf(int data){
     node* n = new node;
     n->data = data;
     n->left = NULL;
@@ -24,15 +25,16 @@ void ariel::Tree::insert(int data){
 }
 //Auxiliary function to insert function
 void ariel::Tree::insertPrivate(int data, node* ptr){
+    //checks if the root is null
     if(rootValue == NULL){
-        rootValue = CreateLeaf(data);
+        rootValue = createLeaf(data);
     }
     else if(data < ptr->data){
         if(ptr->left != NULL){
             insertPrivate(data, ptr->left);
         }
         else{
-            ptr->left=CreateLeaf(data);
+            ptr->left=createLeaf(data);
         }
     }
     else if(data > ptr->data){
@@ -40,16 +42,18 @@ void ariel::Tree::insertPrivate(int data, node* ptr){
             insertPrivate(data, ptr->right);
         }
         else{
-            ptr->right=CreateLeaf(data);
+            ptr->right=createLeaf(data);
         }
     }
+    //throw exception if the data is in the tree
     else{
-        cout << "The data " << data << " is already in the tree\n";
+        throw std::invalid_argument( "The data is already in the tree\n" );
     }
 }
 //Prints the tree inorder
 void ariel::Tree::print(){
     printPrivate(rootValue);
+    cout << "\n";
 }
 //Auxiliary function to print function
 void ariel::Tree::printPrivate(node* ptr){
@@ -66,24 +70,25 @@ void ariel::Tree::printPrivate(node* ptr){
         }
     }
     else{
-        cout << "The tree is empty\n";
+        throw std::invalid_argument( "The tree is empty\n" );
     }
 }
-ariel::Tree::node* ariel::Tree::ReturnNode(int data){
-    return ReturnNodePrivate(data, rootValue);
+// Return the node with the data
+ariel::Tree::node* ariel::Tree::returnNode(int data){
+    return returnNodePrivate(data, rootValue);
 }
-
-ariel::Tree::node* ariel::Tree::ReturnNodePrivate(int data, node* ptr){
+//Auxiliary function to returnNode function
+ariel::Tree::node* ariel::Tree::returnNodePrivate(int data, node* ptr){
     if(ptr != NULL){
         if(ptr->data==data){
             return ptr;
         }
         else{
             if(data < ptr->data){
-                return ReturnNodePrivate(data, ptr->left);
+                return returnNodePrivate(data, ptr->left);
             }
             else{
-                return ReturnNodePrivate(data, ptr->right);
+                return returnNodePrivate(data, ptr->right);
             }
         }
     }
@@ -105,10 +110,10 @@ bool ariel::Tree::containsPrivate(int data, node* ptr){
         }
         else{
             if(data < ptr->data){
-                return ReturnNodePrivate(data, ptr->left);
+                return returnNodePrivate(data, ptr->left);
             }
             else{
-                return ReturnNodePrivate(data, ptr->right);
+                return returnNodePrivate(data, ptr->right);
             }
         }
     }
@@ -119,7 +124,7 @@ bool ariel::Tree::containsPrivate(int data, node* ptr){
 
 //Return the right child of the node with the data
 int ariel::Tree::right(int data){
-    node* ptr = ReturnNode(data);
+    node* ptr = returnNode(data);
     if(ptr != NULL){
         if(ptr->right==NULL){
             return -1;
@@ -128,14 +133,15 @@ int ariel::Tree::right(int data){
             return ptr->right->data;
         }
     }
+    //throw exception if the data is not in the tree
     else{
-        cout << "data " << data << "is not in the tree\n";
+        throw std::invalid_argument( "The data is not in the tree\n" );
         return -1;
     }
 }
 //Return the left child of the node with the data
 int ariel::Tree::left(int data){
-    node* ptr = ReturnNode(data);
+    node* ptr = returnNode(data);
     if(ptr != NULL){
         if(ptr->left==NULL){
             return -1;
@@ -144,8 +150,9 @@ int ariel::Tree::left(int data){
             return ptr->left->data;
         }
     }
+    //throw exception if the data is not in the tree
     else{
-        cout << "data " << data << "is not in the tree\n";
+        throw std::invalid_argument( "The data is not in the tree\n" );
         return -1;
     }
 
@@ -160,78 +167,15 @@ int ariel::Tree::root(){
        return rootValue->data;
     }
 }
-//Remove a node with the data from the tree
-void ariel::Tree::remove(int data){
-    removePrivate(data, rootValue);
-}
-//Auxiliary function to remove function
-void ariel::Tree::removePrivate(int data, node* ptr){
-    if(rootValue != NULL){
-        if (rootValue->data==data) {
-            removeRoot();
-        }
-        else{
-            if(data < ptr->data && ptr->left !=NULL){
-                if(ptr->left->data == data){
-                    removeMatch(ptr, ptr->left, true);
-                }
-                else{
-                    removePrivate(data, ptr->left);
-                }
-            }
-            else if(data > ptr->data && ptr->right !=NULL){
-                if(ptr->right->data == data){
-                    removeMatch(ptr, ptr->right, true);
-                }
-                else{
-                    removePrivate(data, ptr->right);
-                }
-            }
-            else{
-                cout << "The data "<< data << " was not found in the tree\n";
-            }
-        }
-    }
-    else{
-        cout << "The tree is empty\n";
-    }
-}
-//Auxiliary function to remove function
-void ariel::Tree::removeRoot(){
-    node* delPtr = rootValue;
-    int rootValueData = rootValue->data;
-    int smallestInRightSubTrees;
 
-    //0 children
-    if(rootValue->left == NULL && rootValue->right == NULL){
-        rootValue = NULL;
-        delete delPtr;
-    }
-    //1 child
-    else if(rootValue->left == NULL && rootValue->right != NULL){
-        rootValue = rootValue->right;
-        delPtr->right = NULL;
-        delete delPtr;
-    }
-    else if(rootValue->left != NULL && rootValue->right == NULL){
-        rootValue = rootValue->left;
-        delPtr->left = NULL;
-        delete delPtr;
-    }
-    //2 children
-    else{
-        smallestInRightSubTrees = findSmallestPrivate(rootValue->right);
-        removePrivate(smallestInRightSubTrees, rootValue);
-        rootValue->data = smallestInRightSubTrees;
-    }
-}
-//Auxiliary function to remove function
+//Find the smallest data in the tree
 int ariel::Tree::findSmallest(){
     return findSmallestPrivate(rootValue);
 }
 
-//Auxiliary function to remove function
+//Auxiliary function to findSmallest function
 int ariel::Tree::findSmallestPrivate(node* ptr){
+     //checks if the root is null, if true the tree is empty
     if(rootValue == NULL){
         return -1;
     }
@@ -244,79 +188,19 @@ int ariel::Tree::findSmallestPrivate(node* ptr){
         }
     }
 }
-//Auxiliary function to remove function
-void ariel::Tree::removeMatch(node* parent, node* match, bool left){
-    if(rootValue != NULL){
-        node* delPtr;
-        int matchData = match->data;
-        int smallestInRightSubTrees;
 
-        //0 children
-        if(match->left == NULL && match->right == NULL){
-            delPtr = match;
-            if (left == true) {
-                parent->left = NULL;
-            }
-            else{
-                parent->right = NULL;
-            }
-            delete delPtr; 
-        }
-
-        //1 child
-        else if(match->left == NULL && match->right != NULL){
-            if ( left == true) {
-                parent->left = match->right;
-            }
-            else{
-                parent->right = match->right;
-            }
-         match->right= NULL;
-         delPtr = match;
-         delete delPtr;
-        }
-        else if(match->left != NULL && match->right == NULL){
-            if (left == true) {
-                parent->left = match->left;
-            }
-            else{
-                parent->right = match->left;
-            }
-         match->left= NULL;
-         delPtr = match;
-         delete delPtr;
-        }
-
-        //2 children
-        else{
-            smallestInRightSubTrees = findSmallestPrivate(match->right);
-            removePrivate(smallestInRightSubTrees, match);
-            match->data = smallestInRightSubTrees;
-        }
-
-    }
-    else{
-        cout << "Cant remove";
-    }
-}
 //Return the size of the tree
 int ariel::Tree::size(){
-    return sizePrivate(0, rootValue);
+    return sizePrivate(rootValue);
 }
 
-int ariel::Tree::sizePrivate(int value, node* ptr){
-    if(rootValue != NULL){
-        if(ptr->left != NULL){
-            return sizePrivate(value+1,ptr->left);
-        }
-        if(ptr->right != NULL){
-           return sizePrivate(value+1,ptr->right);
-        }
-        return value;
-    }
-    else{
-        return 0;
-    } 
+int ariel::Tree::sizePrivate(node* ptr){
+  if(ptr == NULL){
+      return 0;
+  }
+  else{
+      return (sizePrivate(ptr->left) +1+ sizePrivate(ptr->right));
+  }
 }
 // Return the data of the parent
 int ariel::Tree::parent(int data){
@@ -345,12 +229,145 @@ int ariel::Tree::parentPrivate(int data, node* ptr){
             }
         }
         else{
+            throw std::invalid_argument( "No parent, the data belong to the root\n" );
             return -1;
-             cout << "no parent to "<< data << " its the value of the root\n";
         }
     }
     else{
+        throw std::invalid_argument( "The data was not found in the tree\n" );
         return -1;
-        cout << "The data "<< data << " was not found in the tree\n";  
+    }
+}
+
+//Remove a node with the data from the tree
+void ariel::Tree::remove(int data){
+   removePrivate(data, rootValue);
+}
+//Auxiliary function to remove function
+void ariel::Tree::removePrivate(int data, node* parent){
+     //checks if the root is null, if true the tree is empty
+    if(rootValue != NULL){
+        if(rootValue->data == data){
+            removeRoot();
+        }
+        else{
+            if(data < parent->data && parent->left != NULL){
+                if(parent->left->data == data){
+                    removeMatch(parent, parent->left, true);
+                }
+                else{
+                    removePrivate(data, parent->left);
+                }
+            }
+            else if(data > parent->data && parent->right != NULL){
+                if(parent->right->data == data){
+                    removeMatch(parent, parent->right, false);
+                }
+                else{
+                    removePrivate(data, parent->right);
+                }
+            }
+            else{
+                throw std::invalid_argument( "The data was not found in the tree\n" );  
+            } 
+        }
+    }
+    else{
+        throw std::invalid_argument( "The tree is empty\n" );  
+    }
+}
+//Auxiliary function to remove function
+void ariel::Tree::removeRoot(){
+     //checks if the root is null, if true the tree is empty
+    if(rootValue != NULL){
+        node* delPtr = rootValue;
+        int smallestInRightSubTree;
+
+        // Case 0 - 0 Children
+        if(rootValue->left == NULL && rootValue->right == NULL){
+            rootValue = NULL;
+            delete delPtr;
+        }
+
+        // Case 1 - 1 Child
+        else if(rootValue->left == NULL && rootValue->right != NULL){
+            rootValue = rootValue->right;
+            delPtr->right = NULL;
+            delete delPtr;
+        }
+        else if(rootValue->left != NULL && rootValue->right == NULL){
+            rootValue = rootValue->left;
+            delPtr->left = NULL;
+            delete delPtr;
+        }
+
+        //Case 2 - 2 Children
+        else{
+            smallestInRightSubTree = findSmallestPrivate(rootValue->right);
+            removePrivate(smallestInRightSubTree, rootValue);
+            rootValue->data = smallestInRightSubTree;
+        }
+    }
+    else{
+        throw std::invalid_argument( "The tree is empty\n" );  
+    }
+}
+
+
+//Auxiliary function to remove function
+void ariel::Tree::removeMatch(node* parent, node* match, bool left){
+    //checks if the root is null, if true the tree is empty
+    if(rootValue != NULL){
+        node* delPtr;
+        int matchData = match->data;
+        int smallestInRightSubTree;
+
+        //Case 0 - 0 children
+        if(match->left == NULL && match->right == NULL){
+            delPtr = match;
+            if(left == true){
+                parent->left = NULL;
+            }
+            else{
+                parent->right = NULL;
+            }
+            delete delPtr;
+        }
+
+        //Case 1 - 1 Child
+        else if(match->left == NULL && match->right != NULL){
+            if(left == true){
+                parent->left = match->right;
+            }
+            else{
+                parent->right = match->right;
+            }
+            match->right = NULL;
+            delPtr = match;
+            delete delPtr;
+        }
+
+        else if(match->left != NULL && match->right == NULL){
+            if(left == true){
+                parent->left = match->left;
+            }
+            else{
+                parent->right = match->left;
+            }
+            match->left = NULL;
+            delPtr = match;
+            delete delPtr;
+        }
+        //Case 2 - 2 children
+        else{
+            smallestInRightSubTree = findSmallestPrivate(match->right);
+            removePrivate(smallestInRightSubTree, match);
+            match->data = smallestInRightSubTree;
+        }
+
+    }
+    //if the tree is null cant remove
+    else{
+        throw std::invalid_argument( "The tree is empty\n" );  
     }
 }

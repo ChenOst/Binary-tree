@@ -12,30 +12,31 @@ private:
 
     void   insertPrivate(int data, node* ptr);
     void   printPrivate(node* ptr);
-    node*  ReturnNodePrivate(int data, node* ptr);
+    node*  returnNodePrivate(int data, node* ptr);
     bool   containsPrivate(int data, node* ptr);
-    int    sizePrivate(int data, node* ptr);
+    int    sizePrivate(node* ptr);
     int    parentPrivate(int data, node* ptr);
-    void   removePrivate(int data, node* ptr);
-    void   removeRoot();
     int    findSmallestPrivate(node* ptr);
+    void   removePrivate(int data, node* parent);
+    void   removeRoot();
+    void   removeMatch(node* parent, node* match, bool left);
+
 
 public:
 
     Tree();
-    node*  CreateLeaf(int data);
+    node*  createLeaf(int data);
     void   insert(int data);
     void   print();
-    node*  ReturnNode(int data);
+    node*  returnNode(int data);
     bool   contains(int data);
-    int  right(int data);
-    int  left(int data);
+    int    right(int data);
+    int    left(int data);
     int    size();
-    int  parent(int data);
-    int  root();
-    void   remove(int data);
+    int    parent(int data);
+    int    root();
     int    findSmallest();
-    void   removeMatch(node* parent, node* match, bool left);
-
+    void   remove(int data);
+    
 };
 };

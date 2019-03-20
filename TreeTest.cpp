@@ -12,11 +12,19 @@ using std::cout, std::endl;
 
 int main() {
   ariel::Tree emptytree;
-  ariel::Tree threetree;  
+  ariel::Tree threetree; 
+  ariel::Tree mytree; 
   threetree.insert(5);
   threetree.insert(7);
   threetree.insert(3);
-  
+
+  mytree.insert(1);
+  mytree.insert(2);
+  mytree.insert(3);
+  mytree.insert(4);
+  mytree.insert(5);
+  mytree.insert(6);
+
   badkan::TestCase tc("Binary tree");
   tc
   .CHECK_EQUAL (emptytree.size(), 0)
@@ -35,7 +43,16 @@ int main() {
   .CHECK_EQUAL (threetree.right(5), 7)
   .CHECK_THROWS(threetree.insert(3))
   .CHECK_OK    (threetree.print())
-  
+
+  .CHECK_EQUAL (mytree.contains(3), true)
+  .CHECK_THROWS(mytree.insert(3))
+  .CHECK_OK    (mytree.remove(1))
+  .CHECK_EQUAL (mytree.root(), 2)
+  .CHECK_THROWS(mytree.remove(1))
+  .CHECK_EQUAL (mytree.size() ,5)
+  .CHECK_THROWS(mytree.right(10))
+  .CHECK_OK    (mytree.print())
+
   .print();
   
   cout << "You have " << tc.right() << " right answers and " << tc.wrong() << " wrong answers so your grade is " << tc.grade() << ". Great!" << endl;
