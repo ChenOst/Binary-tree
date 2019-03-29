@@ -375,3 +375,16 @@ void ariel::Tree::removeMatch(node* parent, node* match, bool left){
         throw std::invalid_argument( "The tree is empty\n" );  
     }
 }
+
+//free the tree memory
+void ariel::Tree::freeTree(){
+    freeTreePrivate(rootValue);
+}
+void ariel::Tree::freeTreePrivate(node* ptr){
+    if(ptr == NULL){
+        return;
+    }
+    freeTreePrivate(ptr->left);
+    freeTreePrivate(ptr->right);
+    free(ptr);
+}

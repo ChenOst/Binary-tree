@@ -72,6 +72,7 @@ int main() {
   .CHECK_EQUAL (mytree.size() ,5)
   .CHECK_THROWS(mytree.right(10))
   .CHECK_OK    (mytree.print())
+  .CHECK_OK    (mytree.freeTree())
 
   .CHECK_EQUAL (mytree2.size(), 6)
   .CHECK_EQUAL (mytree2.root(), 8)
@@ -82,6 +83,7 @@ int main() {
   .CHECK_THROWS(mytree2.remove(8))
   .CHECK_EQUAL (mytree2.root(), 6)
   .CHECK_OK    (mytree2.print())
+  .CHECK_OK    (mytree2.freeTree())
 
   .CHECK_EQUAL (mytree3.root(), 4)
   .CHECK_EQUAL (mytree3.left(4), 2)
@@ -93,6 +95,7 @@ int main() {
   .CHECK_THROWS(mytree3.remove(2))
   .CHECK_EQUAL (mytree3.contains(5), false)
   .CHECK_EQUAL (mytree3.size(), 6)
+  .CHECK_OK    (mytree3.freeTree())
 
 
 

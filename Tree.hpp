@@ -20,6 +20,7 @@ private:
     void   removePrivate(int data, node* parent);
     void   removeRoot();
     void   removeMatch(node* parent, node* match, bool left);
+    void   freeTreePrivate(node* ptr);
 
 
 public:
@@ -37,6 +38,7 @@ public:
     int    root();
     int    findSmallest();
     void   remove(int data);
+    void   freeTree();
     
 };
 };
